@@ -1,24 +1,36 @@
 const express = require('express');
 const app = express();
+const {adminAuth, userAuth} = require('./middlewares/auth');
+//handle Auth Middleware for all requests, all, GET, POST, PUT, DELETE
+app.use("/admin", adminAuth);
+app.use("/user", userAuth);
 
-//GET /users ==> It checks all the app.xxx("matching routes") and returns the first one that matches
-app.use("/", (req, res, next) => {
- // res.send('Hello from the root endpoint!');
-  next();
+
+app.get("/admin/getAllData", (req, res) => {
+    //logic to fetching all data from the database
+  // if the request is authorized, proceed to fetch data
+  // const token = "xyz123"; 
+  // const isAdminAuthorized =  token === "xyz123"; // Example token check
+  // if (isAdminAuthorized) {
+  //   res.send("All Data Fetched");
+  // } else {
+  //   res.status(401).send("Unauthorized request");
+  // }
+
+  res.send("All Data Fetched");
+
+
 });
-app.use("/user", 
-  (req, res, next) => {
-    console.log('Middleware 1: Request received at /user');
-    next();
-  }
 
-);
-app.use("/user", 
-  (req, res, next) => {
-    console.log('Middleware 2: Processing request at /user');
-    res.send('Hello from /user endpoint!');
-  }
-);
+app.get("/admin/deleteUser", (req, res) => {
+  //logic to delete a user from the database
+  res.send("User Deleted");
+});
+
+app.get("/user", (req, res) => {
+  //logic to fetch user data
+  res.send("User Data Fetched");
+});
 
 app.listen(7777, () => {
   console.log('Server is running on port 7777...');
