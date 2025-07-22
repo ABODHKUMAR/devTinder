@@ -1,33 +1,50 @@
-const express = require('express');
+const express = require("express");
 const app = express();
+const connectDB = require("./config/database");
+const User = require("./models/user");
 
+app.post("/signup", async (req, res) => {
+  // const userObject = {
+  //   firstName: "John",
+  //   lastName: "Doe",
+  //   emailId: "john.doe@example.com",
+  //   password: "password123",
+  //   age: 30,
+  //   gender: "male"
+  // };
 
-app.get("/getUserData", (req, res) => {
-  //logic to fetch user data
-  // throw new Error("Error fetching user data");
-  res.send("User Data Fetched");
-});
+  //createing a new user instance of the User model
+  // const user = new User(userObject);
 
-app.use("/",(err, req, res, next)=>{
-    if(err){
-      console.error("Error occurred:", err.message);
-      res.status(500).send("Internal Server Error");
-    }
-});
+  const user = new User({
+    firstName: "Sachin",
+    lastName: "Tendulkar",
+    emailId: "sachin.tendulkar@example.com",
+    password: "password123",
+    age: 30,
+    gender: "male",
+  });
 
-app.use("/products", (req, res,) => {
-  // logic to fetch products
   try {
-    throw new Error("Error fetching products");
-    
+    await user.save();
+    res.status(201).json({
+      message: "User created successfully",
+      user: user,
+    });
   } catch (error) {
-    console.error("Error fetching products:", error.message);
-    res.status(500).send("Internal Server Error");
-    return;
-    
+    return res.status(400).json({
+      message: "Validation failed",
+      errors: error.errors,
+    });
   }
-  res.send("Products Fetched");
 });
-app.listen(7777, () => {
-  console.log('Server is running on port 7777...');
-})
+
+connectDB()
+  .then(() => {
+    app.listen(7777, () => {
+      console.log("Server is running on port 7777...");
+    });
+  })
+  .catch((err) => {
+    console.error("Database connection failed:", err);
+  });
