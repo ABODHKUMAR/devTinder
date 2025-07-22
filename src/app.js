@@ -1,21 +1,23 @@
 const express = require('express');
 const app = express();
 
-app.use("/user", [
+//GET /users ==> It checks all the app.xxx("matching routes") and returns the first one that matches
+app.use("/", (req, res, next) => {
+ // res.send('Hello from the root endpoint!');
+  next();
+});
+app.use("/user", 
   (req, res, next) => {
-    //this function is known as a route handler
-    //it will handle all requests to the /user path , GET, POST, PUT, DELETE, etc.
-     next(); // Call next() to pass control to the next middleware or route handler 
-    // res.send("Route handler 1")
-   // Call next() to pass control to the next middleware or route handler
-  }],
-  (req, res, next) =>{
-    //this function is also a route handler
-    //it will handle all requests to the /user path after the first handler
-    res.send("Route handler 2")
-    // next();
+    console.log('Middleware 1: Request received at /user');
+    next();
   }
 
+);
+app.use("/user", 
+  (req, res, next) => {
+    console.log('Middleware 2: Processing request at /user');
+    res.send('Hello from /user endpoint!');
+  }
 );
 
 app.listen(7777, () => {
