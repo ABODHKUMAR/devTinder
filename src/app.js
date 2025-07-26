@@ -8,17 +8,6 @@ app.get("/", (req,res, next)=>{
   res.send("Hello world");
 })
 app.post("/signup", async (req, res) => {
-  // const userObject = {
-  //   firstName: "John",
-  //   lastName: "Doe",
-  //   emailId: "john.doe@example.com",
-  //   password: "password123",
-  //   age: 30,
-  //   gender: "male"
-  // };
-
-  //createing a new user instance of the User model
-  // const user = new User(userObject);
 
   const user = new User(req.body);
   console.log(user);
@@ -34,6 +23,32 @@ app.post("/signup", async (req, res) => {
       message: "Validation failed",
       errors: error.errors,
     });
+  }
+});
+
+app.get("/users", async (req, res) => {
+  const userEmail = req.body.emailId;
+  try {
+    const user = await User.findOne({ emailId: userEmail });
+    if (!user) {
+      return res.status(404).json({ message: "No user found" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Error retrieving users", error: error.message });
+  }
+});
+
+app.get("/feed", async (req, res) => {
+  try{
+    const  users = await User.find({});
+    if (users.length === 0) {
+      return res.status(404).json({ message: "No users found" });
+    }
+    res.send(users);
+    res.status(200).send(users);
+  } catch (error) {
+    res.status(500).json({ message: "Error retrieving feed", error: error.message });
   }
 });
 
