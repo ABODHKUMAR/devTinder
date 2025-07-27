@@ -3,7 +3,6 @@ const authRouter = express.Router();
 const { validateSignUpData } = require("../utils/validation");
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
-const {userAuth} = require("./../middlewares/auth");
 
 authRouter.post("/signup", async (req, res) => {
 
@@ -72,6 +71,17 @@ authRouter.post("/login", async (req, res) => {
 
   } catch (error) {
     res.status(500).json({ message: "Error logging in", error: error.message });
+  }
+});
+
+authRouter.post("/logout", (req, res) => {
+  try {
+    res.cookie("token", null, {
+        expires: new Date(Date.now()),
+    });
+    res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    res.status(500).json({ message: "Error logging out", error: error.message });
   }
 });
 

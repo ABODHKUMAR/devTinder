@@ -1,3 +1,4 @@
+const { skipMiddlewareFunction } = require('mongoose');
 const validator = require('validator');
 const validateSignUpData = (req) => {
    const { firstName, lastName, emailId, password } = req.body;
@@ -12,6 +13,21 @@ const validateSignUpData = (req) => {
    }
 }
 
+const validateEditProfileData = (req) => {
+   const allowedEditFields = ["firstName", "lastName", "photoUrl", "gender", "age", "about", "skills"];
+   const isEditAllowed = Object.keys(req.body).every((key) => {
+       if (!allowedEditFields.includes(key)) {
+           throw new Error(`Invalid field: ${key}`);
+       }
+       return true;
+   });
+   if (!isEditAllowed) {
+       throw new Error("Invalid profile update data");
+   }
+   return isEditAllowed
+}
+
 module.exports = {
-  validateSignUpData
+  validateSignUpData,
+  validateEditProfileData
 }
